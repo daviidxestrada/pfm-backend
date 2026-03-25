@@ -7,6 +7,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const apartmentRoutes = require('./routes/apartmentRoutes');
+app.use('/api/apartments', apartmentRoutes);
+
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.send('API funcionando');
