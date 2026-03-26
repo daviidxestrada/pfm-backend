@@ -1,0 +1,274 @@
+{
+  "info": {
+    "_postman_id": "76daae7a-18be-4afb-a236-c83bcd090f20",
+    "name": "PFM Apartment Booking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51761384"
+  },
+  "item": [
+    {
+      "name": "Apartments",
+      "item": [
+        {
+          "name": "GET all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/apartments/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "apartments",
+                ""
+              ]
+            },
+            "description": "Obtiene todos los apartamentos disponibles en la base de datos.\n\nDevuelve un array con todos los apartamentos registrados.  \nSe utiliza para mostrar el listado principal en el frontend."
+          },
+          "response": []
+        },
+        {
+          "name": "GET by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/apartments/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "apartments",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Obtiene el detalle de un apartamento específico mediante su ID.\n\nDevuelve toda la información del apartamento.  \nSe utiliza para mostrar la vista detallada en el frontend."
+          },
+          "response": []
+        },
+        {
+          "name": "POST create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Apartamento en Madrid\",\r\n  \"description\": \"Céntrico y moderno\",\r\n  \"city\": \"Madrid\",\r\n  \"price\": 120,\r\n  \"images\": []\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/apartments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "apartments"
+              ]
+            },
+            "description": "Crea un nuevo apartamento en la base de datos.\n\nRequiere los siguientes campos en el body:\n\n- title (string)\n    \n- description (string)\n    \n- city (string)\n    \n- price (number)\n    \n- images (array opcional)\n    \n\nValida que los campos obligatorios estén presentes y que el precio sea mayor que 0."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/apartments/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "apartments",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Actualiza la información de un apartamento existente mediante su ID.\n\nPermite modificar uno o varios campos:\n\n- title\n    \n- description\n    \n- city\n    \n- price\n    \n- images\n    \n\nSi el apartamento no existe, devuelve error 404."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/apartments/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "apartments",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Elimina un apartamento de la base de datos mediante su ID.\n\nDevuelve un mensaje confirmando la eliminación.  \nSi el apartamento no existe, devuelve error 404."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "GET all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/reservations/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "reservations",
+                ""
+              ]
+            },
+            "description": "Obtiene todas las reservas registradas en la base de datos.\n\nIncluye la información del apartamento asociado mediante populate.  \nSe utiliza para visualizar reservas en el sistema."
+          },
+          "response": []
+        },
+        {
+          "name": "GET by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/reservations/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "reservations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Obtiene el detalle de una reserva específica mediante su ID.\n\nIncluye la información del apartamento relacionado.  \nDevuelve error 404 si la reserva no existe."
+          },
+          "response": []
+        },
+        {
+          "name": "POST create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"apartment\": \"ID_DEL_APARTMENT\",\r\n  \"startDate\": \"2026-04-01\",\r\n  \"endDate\": \"2026-04-05\",\r\n  \"totalPrice\": 400\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/reservations/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "reservations",
+                ""
+              ]
+            },
+            "description": "Crea una nueva reserva en la base de datos.\n\nRequiere los siguientes campos:\n\n- apartment (ID del apartamento)\n    \n- startDate (fecha inicio)\n    \n- endDate (fecha fin)\n    \n- totalPrice (number)\n    \n\nValida:\n\n- Que todos los campos estén presentes\n    \n- Que la fecha de fin sea posterior a la de inicio"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/reservations/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "reservations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Elimina una reserva existente mediante su ID.\n\nDevuelve un mensaje confirmando la eliminación.  \nDevuelve error 404 si la reserva no existe."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
