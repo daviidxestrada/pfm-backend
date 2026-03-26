@@ -1,14 +1,19 @@
 const express = require('express');
 const cors = require('cors');
+const apartmentRoutes = require('./routes/apartmentRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
+
 
 const app = express();
 
-// Middlewares
+// Middlewares globales
 app.use(cors());
 app.use(express.json());
 
-const apartmentRoutes = require('./routes/apartmentRoutes');
+// Rutas
 app.use('/api/apartments', apartmentRoutes);
+app.use('/api/reservations', reservationRoutes);
+
 
 // Ruta de prueba
 app.get('/', (req, res) => {
