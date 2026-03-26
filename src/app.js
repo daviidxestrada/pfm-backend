@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const apartmentRoutes = require('./routes/apartmentRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
+const errorHandler = require('./middlewares/errorMiddleware');
 
 
 const app = express();
@@ -14,10 +15,12 @@ app.use(express.json());
 app.use('/api/apartments', apartmentRoutes);
 app.use('/api/reservations', reservationRoutes);
 
-
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.send('API funcionando');
 });
+
+// Middleware de manejo de errores
+app.use(errorHandler);
 
 module.exports = app;
