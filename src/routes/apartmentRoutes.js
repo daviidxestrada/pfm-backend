@@ -3,10 +3,18 @@ const router = express.Router();
 
 const {
     getApartments,
+    getApartmentById,
+    createApartment,
+    updateApartment,
+    deleteApartment
 } = require('../controllers/apartmentController');
 
-// GET /api/apartments
+// CRUD
 router.get('/', getApartments);
+router.get('/:id', getApartmentById);
+router.post('/', createApartment);
+router.put('/:id', updateApartment);
+router.delete('/:id', deleteApartment);
 
 module.exports = router;
 
