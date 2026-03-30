@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const apartmentSchema = new mongoose.Schema(
   {
@@ -26,7 +26,7 @@ const apartmentSchema = new mongoose.Schema(
     ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // opcional de momento
+      ref: 'User',
     },
   },
   {
@@ -34,4 +34,4 @@ const apartmentSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Apartment', apartmentSchema);
+export default mongoose.model('Apartment', apartmentSchema);
