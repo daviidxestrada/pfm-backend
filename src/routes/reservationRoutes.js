@@ -1,5 +1,6 @@
 import express from 'express';
 
+import { adminOnly, protect } from '../middlewares/authMiddleware.js';
 import {
   createReservation,
   deleteReservation,
@@ -9,9 +10,9 @@ import {
 
 const router = express.Router();
 
-router.get('/', getReservations);
-router.get('/:id', getReservationById);
+router.get('/', protect, adminOnly, getReservations);
+router.get('/:id', protect, adminOnly, getReservationById);
 router.post('/', createReservation);
-router.delete('/:id', deleteReservation);
+router.delete('/:id', protect, adminOnly, deleteReservation);
 
 export default router;
