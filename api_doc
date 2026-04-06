@@ -7,6 +7,83 @@
   },
   "item": [
     {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Juan\",\r\n  \"email\": \"juan@test.com\",\r\n  \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registra un nuevo usuario en el sistema.\n\n- Crea un usuario con nombre, email y contraseña.\n    \n- La contraseña se almacena encriptada con bcrypt.\n    \n- El email debe ser único.\n    \n\nEste endpoint no requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"juan@test.com\",\r\n  \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/login?=&=",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": ""
+                },
+                {
+                  "key": "",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "Autentica a un usuario y devuelve un token JWT.\n\n- Verifica email y contraseña.\n    \n- Si las credenciales son correctas, devuelve un token.\n    \n- El token se usará para acceder a rutas protegidas.\n    \n\nEl token JWT debe enviarse en las peticiones protegidas mediante:\n\nAuthorization: Bearer\n\nNo requiere autenticación previa."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Apartments",
       "item": [
         {
