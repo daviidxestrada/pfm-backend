@@ -3,6 +3,13 @@ import jwt from 'jsonwebtoken';
 
 import User from '../models/User.js';
 
+const buildAuthUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+});
+
 export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -23,11 +30,7 @@ export const register = async (req, res, next) => {
 
     return res.status(201).json({
       message: 'Usuario creado',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      user: buildAuthUser(user),
     });
   } catch (error) {
     return next(error);
@@ -58,13 +61,15 @@ export const login = async (req, res, next) => {
 
     return res.json({
       token,
-      user: {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-      },
+      user: buildAuthUser(user),
     });
   } catch (error) {
     return next(error);
   }
+};
+
+export const getCurrentUser = async (req, res) => {
+  return res.json({
+    user: buildAuthUser(req.user),
+  });
 };
