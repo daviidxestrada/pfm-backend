@@ -1,6 +1,16 @@
 import Apartment from '../models/Apartment.js';
 import Reservation from '../models/Reservation.js';
 
+const hasDateOverlap = (startDate, endDate, existingReservation) =>
+  startDate < existingReservation.endDate && endDate > existingReservation.startDate;
+
+const findReservationConflict = async (apartmentId, startDate, endDate) =>
+  Reservation.findOne({
+    apartment: apartmentId,
+    startDate: { $lt: endDate },
+    endDate: { $gt: startDate },
+  });
+
 export const getReservations = async (req, res, next) => {
   try {
     const reservations = await Reservation.find().populate('apartment');
@@ -21,6 +31,29 @@ export const getReservationById = async (req, res, next) => {
     }
 
     res.json(reservation);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getApartmentAvailability = async (req, res, next) => {
+  try {
+    const apartment = await Apartment.findById(req.params.apartmentId);
+
+    if (!apartment) {
+      const error = new Error('Apartamento no encontrado');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const reservations = await Reservation.find({ apartment: apartment._id })
+      .sort({ startDate: 1 })
+      .select('startDate endDate');
+
+    res.json({
+      apartmentId: apartment._id,
+      unavailableRanges: reservations,
+    });
   } catch (error) {
     next(error);
   }
@@ -56,6 +89,30 @@ export const createReservation = async (req, res, next) => {
     if (parsedStartDate >= parsedEndDate) {
       const error = new Error('La fecha de fin debe ser posterior a la de inicio');
       error.statusCode = 400;
+      throw error;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (parsedStartDate < today) {
+      const error = new Error('La fecha de inicio no puede ser anterior a hoy');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const conflictingReservation = await findReservationConflict(
+      apartment,
+      parsedStartDate,
+      parsedEndDate
+    );
+
+    if (
+      conflictingReservation &&
+      hasDateOverlap(parsedStartDate, parsedEndDate, conflictingReservation)
+    ) {
+      const error = new Error('Las fechas seleccionadas no estan disponibles');
+      error.statusCode = 409;
       throw error;
     }
 
