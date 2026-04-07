@@ -28,6 +28,18 @@ export const getReservations = async (req, res, next) => {
   }
 };
 
+export const getMyReservations = async (req, res, next) => {
+  try {
+    const reservations = await Reservation.find({ user: req.user._id })
+      .populate('apartment')
+      .sort({ startDate: -1 });
+
+    res.json(reservations);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getReservationById = async (req, res, next) => {
   try {
     const reservation = await Reservation.findById(req.params.id).populate('apartment');
@@ -83,7 +95,7 @@ export const getApartmentAvailability = async (req, res, next) => {
 
 export const createReservation = async (req, res, next) => {
   try {
-    const { apartment, startDate, endDate, user } = req.body;
+    const { apartment, startDate, endDate } = req.body;
 
     if (!apartment || !startDate || !endDate) {
       const error = new Error('Todos los campos son obligatorios');
@@ -151,7 +163,7 @@ export const createReservation = async (req, res, next) => {
     const totalPrice = totalNights * apartmentDoc.price;
 
     const reservation = new Reservation({
-      user,
+      user: req.user._id,
       apartment,
       startDate: parsedStartDate,
       endDate: parsedEndDate,

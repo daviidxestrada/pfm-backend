@@ -5,6 +5,7 @@ import {
   createReservation,
   deleteReservation,
   getApartmentAvailability,
+  getMyReservations,
   getReservationById,
   getReservations,
 } from '../controllers/reservationController.js';
@@ -12,9 +13,10 @@ import {
 const router = express.Router();
 
 router.get('/availability/:apartmentId', getApartmentAvailability);
+router.get('/mine', protect, getMyReservations);
 router.get('/', protect, adminOnly, getReservations);
 router.get('/:id', protect, adminOnly, getReservationById);
-router.post('/', createReservation);
+router.post('/', protect, createReservation);
 router.delete('/:id', protect, adminOnly, deleteReservation);
 
 export default router;
