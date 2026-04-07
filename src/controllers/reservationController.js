@@ -2,12 +2,15 @@ import Apartment from '../models/Apartment.js';
 import DateBlock from '../models/DateBlock.js';
 import Reservation from '../models/Reservation.js';
 
+const ACTIVE_RESERVATION_STATUSES = ['pending', 'approved'];
+
 const hasDateOverlap = (startDate, endDate, existingReservation) =>
   startDate < existingReservation.endDate && endDate > existingReservation.startDate;
 
 const findReservationConflict = async (apartmentId, startDate, endDate) =>
   Reservation.findOne({
     apartment: apartmentId,
+    status: { $in: ACTIVE_RESERVATION_STATUSES },
     startDate: { $lt: endDate },
     endDate: { $gt: startDate },
   });
@@ -21,7 +24,9 @@ const findBlockConflict = async (apartmentId, startDate, endDate) =>
 
 export const getReservations = async (req, res, next) => {
   try {
-    const reservations = await Reservation.find().populate('apartment');
+    const reservations = await Reservation.find()
+      .populate('apartment')
+      .populate('user', 'name email');
     res.json(reservations);
   } catch (error) {
     next(error);
@@ -42,7 +47,9 @@ export const getMyReservations = async (req, res, next) => {
 
 export const getReservationById = async (req, res, next) => {
   try {
-    const reservation = await Reservation.findById(req.params.id).populate('apartment');
+    const reservation = await Reservation.findById(req.params.id)
+      .populate('apartment')
+      .populate('user', 'name email');
 
     if (!reservation) {
       const error = new Error('Reserva no encontrada');
@@ -66,9 +73,12 @@ export const getApartmentAvailability = async (req, res, next) => {
       throw error;
     }
 
-    const reservations = await Reservation.find({ apartment: apartment._id })
+    const reservations = await Reservation.find({
+      apartment: apartment._id,
+      status: { $in: ACTIVE_RESERVATION_STATUSES },
+    })
       .sort({ startDate: 1 })
-      .select('startDate endDate');
+      .select('startDate endDate status');
     const blocks = await DateBlock.find({ apartment: apartment._id })
       .sort({ startDate: 1 })
       .select('startDate endDate note');
@@ -168,10 +178,47 @@ export const createReservation = async (req, res, next) => {
       startDate: parsedStartDate,
       endDate: parsedEndDate,
       totalPrice,
+      status: 'pending',
     });
 
     const savedReservation = await reservation.save();
     res.status(201).json(savedReservation);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateReservationStatus = async (req, res, next) => {
+  try {
+    const { status, rejectionReason } = req.body;
+    const reservation = await Reservation.findById(req.params.id)
+      .populate('apartment')
+      .populate('user', 'name email');
+
+    if (!reservation) {
+      const error = new Error('Reserva no encontrada');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (!['approved', 'rejected'].includes(status)) {
+      const error = new Error('Estado de reserva no valido');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (status === 'rejected' && !rejectionReason?.trim()) {
+      const error = new Error('Debes indicar un motivo al denegar la solicitud');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    reservation.status = status;
+    reservation.rejectionReason = status === 'rejected' ? rejectionReason.trim() : '';
+
+    await reservation.save();
+
+    res.json(reservation);
   } catch (error) {
     next(error);
   }

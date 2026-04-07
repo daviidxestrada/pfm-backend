@@ -23,6 +23,16 @@ const reservationSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending',
+    },
+    rejectionReason: {
+      type: String,
+      trim: true,
+      default: '',
+    },
   },
   {
     timestamps: true,
