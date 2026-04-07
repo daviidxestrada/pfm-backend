@@ -1,4 +1,5 @@
 import Apartment from '../models/Apartment.js';
+import DateBlock from '../models/DateBlock.js';
 import Reservation from '../models/Reservation.js';
 
 const hasDateOverlap = (startDate, endDate, existingReservation) =>
@@ -6,6 +7,13 @@ const hasDateOverlap = (startDate, endDate, existingReservation) =>
 
 const findReservationConflict = async (apartmentId, startDate, endDate) =>
   Reservation.findOne({
+    apartment: apartmentId,
+    startDate: { $lt: endDate },
+    endDate: { $gt: startDate },
+  });
+
+const findBlockConflict = async (apartmentId, startDate, endDate) =>
+  DateBlock.findOne({
     apartment: apartmentId,
     startDate: { $lt: endDate },
     endDate: { $gt: startDate },
@@ -49,10 +57,24 @@ export const getApartmentAvailability = async (req, res, next) => {
     const reservations = await Reservation.find({ apartment: apartment._id })
       .sort({ startDate: 1 })
       .select('startDate endDate');
+    const blocks = await DateBlock.find({ apartment: apartment._id })
+      .sort({ startDate: 1 })
+      .select('startDate endDate note');
+
+    const unavailableRanges = [
+      ...reservations.map((reservation) => ({
+        ...reservation.toObject(),
+        source: 'reservation',
+      })),
+      ...blocks.map((block) => ({
+        ...block.toObject(),
+        source: 'block',
+      })),
+    ].sort((firstRange, secondRange) => firstRange.startDate - secondRange.startDate);
 
     res.json({
       apartmentId: apartment._id,
-      unavailableRanges: reservations,
+      unavailableRanges,
     });
   } catch (error) {
     next(error);
@@ -112,6 +134,14 @@ export const createReservation = async (req, res, next) => {
       hasDateOverlap(parsedStartDate, parsedEndDate, conflictingReservation)
     ) {
       const error = new Error('Las fechas seleccionadas no estan disponibles');
+      error.statusCode = 409;
+      throw error;
+    }
+
+    const conflictingBlock = await findBlockConflict(apartment, parsedStartDate, parsedEndDate);
+
+    if (conflictingBlock) {
+      const error = new Error('Las fechas seleccionadas estan bloqueadas manualmente');
       error.statusCode = 409;
       throw error;
     }
