@@ -1,10 +1,31 @@
 {
   "info": {
-    "_postman_id": "76daae7a-18be-4afb-a236-c83bcd090f20",
-    "name": "PFM Apartment Booking API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "51761384"
+    "_postman_id": "4fb8f8f1-0c3f-4e8f-9f89-bf84cc4f5c7d",
+    "name": "PFM Direct Booking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "apartmentId",
+      "value": ""
+    },
+    {
+      "key": "reservationId",
+      "value": ""
+    },
+    {
+      "key": "blockId",
+      "value": ""
+    }
+  ],
   "item": [
     {
       "name": "Auth",
@@ -13,73 +34,78 @@
           "name": "Register",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Juan\",\r\n  \"email\": \"juan@test.com\",\r\n  \"password\": \"123456\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"name\": \"Usuario Demo\",\n  \"email\": \"usuario@demo.com\",\n  \"password\": \"ClaveSegura123\"\n}"
             },
             "url": {
-              "raw": "http://localhost:5000/api/auth/register",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/auth/register",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
                 "auth",
                 "register"
               ]
             },
-            "description": "Registra un nuevo usuario en el sistema.\n\n- Crea un usuario con nombre, email y contraseña.\n    \n- La contraseña se almacena encriptada con bcrypt.\n    \n- El email debe ser único.\n    \n\nEste endpoint no requiere autenticación."
-          },
-          "response": []
+            "description": "Registra un nuevo usuario con rol user."
+          }
         },
         {
           "name": "Login",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"juan@test.com\",\r\n  \"password\": \"123456\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"email\": \"admin@demo.com\",\n  \"password\": \"ClaveSegura123\"\n}"
             },
             "url": {
-              "raw": "http://localhost:5000/api/auth/login?=&=",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/auth/login",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
                 "auth",
                 "login"
-              ],
-              "query": [
-                {
-                  "key": "",
-                  "value": ""
-                },
-                {
-                  "key": "",
-                  "value": ""
-                }
               ]
             },
-            "description": "Autentica a un usuario y devuelve un token JWT.\n\n- Verifica email y contraseña.\n    \n- Si las credenciales son correctas, devuelve un token.\n    \n- El token se usará para acceder a rutas protegidas.\n    \n\nEl token JWT debe enviarse en las peticiones protegidas mediante:\n\nAuthorization: Bearer\n\nNo requiere autenticación previa."
-          },
-          "response": []
+            "description": "Autentica un usuario y devuelve token JWT."
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Devuelve el usuario autenticado."
+          }
         }
       ]
     },
@@ -87,149 +113,121 @@
       "name": "Apartments",
       "item": [
         {
-          "name": "GET all",
+          "name": "Get all apartments",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "http://localhost:5000/api/apartments/",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/apartments",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
-                "apartments",
-                ""
-              ]
-            },
-            "description": "Obtiene todos los apartamentos disponibles en la base de datos.\n\nDevuelve un array con todos los apartamentos registrados.  \nSe utiliza para mostrar el listado principal en el frontend."
-          },
-          "response": []
-        },
-        {
-          "name": "GET by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:5000/api/apartments/:id",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "5000",
-              "path": [
-                "api",
-                "apartments",
-                ":id"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": ""
-                }
-              ]
-            },
-            "description": "Obtiene el detalle de un apartamento específico mediante su ID.\n\nDevuelve toda la información del apartamento.  \nSe utiliza para mostrar la vista detallada en el frontend."
-          },
-          "response": []
-        },
-        {
-          "name": "POST create",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"title\": \"Apartamento en Madrid\",\r\n  \"description\": \"Céntrico y moderno\",\r\n  \"city\": \"Madrid\",\r\n  \"price\": 120,\r\n  \"images\": []\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:5000/api/apartments",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "5000",
-              "path": [
-                "api",
                 "apartments"
               ]
             },
-            "description": "Crea un nuevo apartamento en la base de datos.\n\nRequiere los siguientes campos en el body:\n\n- title (string)\n    \n- description (string)\n    \n- city (string)\n    \n- price (number)\n    \n- images (array opcional)\n    \n\nValida que los campos obligatorios estén presentes y que el precio sea mayor que 0."
-          },
-          "response": []
+            "description": "Lista todos los apartamentos."
+          }
         },
         {
-          "name": "PUT update",
+          "name": "Get apartment by id",
           "request": {
-            "method": "PUT",
-            "header": [],
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/apartments/{{apartmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "apartments",
+                "{{apartmentId}}"
+              ]
+            },
+            "description": "Obtiene el detalle de un apartamento."
+          }
+        },
+        {
+          "name": "Create apartment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"title\": \"Apartamento en Malaga centro\",\n  \"description\": \"Apartamento luminoso con balcon y cocina equipada.\",\n  \"city\": \"Malaga\",\n  \"price\": 120,\n  \"images\": []\n}"
             },
             "url": {
-              "raw": "http://localhost:5000/api/apartments/:id",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/apartments",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
-                "apartments",
-                ":id"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": ""
-                }
+                "apartments"
               ]
             },
-            "description": "Actualiza la información de un apartamento existente mediante su ID.\n\nPermite modificar uno o varios campos:\n\n- title\n    \n- description\n    \n- city\n    \n- price\n    \n- images\n    \n\nSi el apartamento no existe, devuelve error 404."
-          },
-          "response": []
+            "description": "Crea un apartamento. Requiere admin."
+          }
         },
         {
-          "name": "Delete",
+          "name": "Update apartment",
           "request": {
-            "method": "DELETE",
-            "header": [],
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Apartamento actualizado\",\n  \"description\": \"Descripcion actualizada\",\n  \"city\": \"Malaga\",\n  \"price\": 135,\n  \"images\": []\n}"
+            },
             "url": {
-              "raw": "http://localhost:5000/api/apartments/:id",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/apartments/{{apartmentId}}",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
                 "apartments",
-                ":id"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": ""
-                }
+                "{{apartmentId}}"
               ]
             },
-            "description": "Elimina un apartamento de la base de datos mediante su ID.\n\nDevuelve un mensaje confirmando la eliminación.  \nSi el apartamento no existe, devuelve error 404."
-          },
-          "response": []
+            "description": "Actualiza un apartamento. Requiere admin."
+          }
+        },
+        {
+          "name": "Delete apartment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/apartments/{{apartmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "apartments",
+                "{{apartmentId}}"
+              ]
+            },
+            "description": "Elimina un apartamento. Requiere admin."
+          }
         }
       ]
     },
@@ -237,113 +235,287 @@
       "name": "Reservations",
       "item": [
         {
-          "name": "GET all",
+          "name": "Get apartment availability",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "http://localhost:5000/api/reservations/",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/reservations/availability/{{apartmentId}}",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
                 "reservations",
-                ""
+                "availability",
+                "{{apartmentId}}"
               ]
             },
-            "description": "Obtiene todas las reservas registradas en la base de datos.\n\nIncluye la información del apartamento asociado mediante populate.  \nSe utiliza para visualizar reservas en el sistema."
-          },
-          "response": []
+            "description": "Devuelve reservas activas y bloqueos manuales del apartamento."
+          }
         },
         {
-          "name": "GET by ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:5000/api/reservations/:id",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "5000",
-              "path": [
-                "api",
-                "reservations",
-                ":id"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": ""
-                }
-              ]
-            },
-            "description": "Obtiene el detalle de una reserva específica mediante su ID.\n\nIncluye la información del apartamento relacionado.  \nDevuelve error 404 si la reserva no existe."
-          },
-          "response": []
-        },
-        {
-          "name": "POST create",
+          "name": "Create reservation",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"apartment\": \"ID_DEL_APARTMENT\",\r\n  \"startDate\": \"2026-04-01\",\r\n  \"endDate\": \"2026-04-05\",\r\n  \"totalPrice\": 400\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": "{\n  \"apartment\": \"{{apartmentId}}\",\n  \"startDate\": \"2026-06-10\",\n  \"endDate\": \"2026-06-14\"\n}"
             },
             "url": {
-              "raw": "http://localhost:5000/api/reservations/",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/reservations",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
-                "reservations",
-                ""
+                "reservations"
               ]
             },
-            "description": "Crea una nueva reserva en la base de datos.\n\nRequiere los siguientes campos:\n\n- apartment (ID del apartamento)\n    \n- startDate (fecha inicio)\n    \n- endDate (fecha fin)\n    \n- totalPrice (number)\n    \n\nValida:\n\n- Que todos los campos estén presentes\n    \n- Que la fecha de fin sea posterior a la de inicio"
-          },
-          "response": []
+            "description": "Crea una reserva pendiente. Requiere usuario autenticado."
+          }
         },
         {
-          "name": "Delete",
+          "name": "Get my reservations",
           "request": {
-            "method": "DELETE",
-            "header": [],
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
             "url": {
-              "raw": "http://localhost:5000/api/reservations/:id",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/reservations/mine",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "5000",
               "path": [
-                "api",
                 "reservations",
-                ":id"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": ""
-                }
+                "mine"
               ]
             },
-            "description": "Elimina una reserva existente mediante su ID.\n\nDevuelve un mensaje confirmando la eliminación.  \nDevuelve error 404 si la reserva no existe."
-          },
-          "response": []
+            "description": "Lista las reservas del usuario autenticado."
+          }
+        },
+        {
+          "name": "Get all reservations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations"
+              ]
+            },
+            "description": "Lista todas las reservas. Requiere admin."
+          }
+        },
+        {
+          "name": "Get reservation by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "{{reservationId}}"
+              ]
+            },
+            "description": "Obtiene una reserva concreta. Requiere admin."
+          }
+        },
+        {
+          "name": "Approve reservation",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "{{reservationId}}",
+                "status"
+              ]
+            },
+            "description": "Aprueba una reserva. Requiere admin."
+          }
+        },
+        {
+          "name": "Reject reservation",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"rejected\",\n  \"rejectionReason\": \"Las fechas estan reservadas para mantenimiento interno.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "{{reservationId}}",
+                "status"
+              ]
+            },
+            "description": "Deniega una reserva. Requiere admin."
+          }
+        },
+        {
+          "name": "Delete reservation",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservations",
+                "{{reservationId}}"
+              ]
+            },
+            "description": "Elimina una reserva. Requiere admin."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Blocks",
+      "item": [
+        {
+          "name": "Get blocks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blocks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "blocks"
+              ]
+            },
+            "description": "Lista todos los bloqueos manuales. Requiere admin."
+          }
+        },
+        {
+          "name": "Create block",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"apartment\": \"{{apartmentId}}\",\n  \"startDate\": \"2026-07-01\",\n  \"endDate\": \"2026-07-05\",\n  \"note\": \"Mantenimiento anual\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/blocks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "blocks"
+              ]
+            },
+            "description": "Crea un bloqueo manual de fechas. Requiere admin."
+          }
+        },
+        {
+          "name": "Delete block",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blocks/{{blockId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "blocks",
+                "{{blockId}}"
+              ]
+            },
+            "description": "Elimina un bloqueo manual. Requiere admin."
+          }
         }
       ]
     }
