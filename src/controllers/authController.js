@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 
 import User from '../models/User.js';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const buildAuthUser = (user) => ({
   id: user._id,
   name: user.name,
@@ -10,14 +12,42 @@ const buildAuthUser = (user) => ({
   role: user.role,
 });
 
+const createError = (message, statusCode) => {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  return error;
+};
+
+const normalizeCredentials = ({ name, email, password } = {}) => ({
+  name: typeof name === 'string' ? name.trim() : '',
+  email: typeof email === 'string' ? email.trim().toLowerCase() : '',
+  password: typeof password === 'string' ? password : '',
+});
+
 export const register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password } = normalizeCredentials(req.body);
+
+    if (!name || !email || !password) {
+      throw createError('Nombre, email y contrasena son obligatorios', 400);
+    }
+
+    if (name.length < 2) {
+      throw createError('El nombre debe tener al menos 2 caracteres', 400);
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      throw createError('El email no es valido', 400);
+    }
+
+    if (password.length < 6) {
+      throw createError('La contrasena debe tener al menos 6 caracteres', 400);
+    }
 
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ message: 'El usuario ya existe' });
+      throw createError('El usuario ya existe', 409);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -39,18 +69,30 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = normalizeCredentials(req.body);
+
+    if (!email || !password) {
+      throw createError('Email y contrasena son obligatorios', 400);
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      throw createError('El email no es valido', 400);
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw createError('Falta la configuracion de JWT_SECRET', 500);
+    }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: 'Credenciales incorrectas' });
+      throw createError('Credenciales incorrectas', 401);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: 'Credenciales incorrectas' });
+      throw createError('Credenciales incorrectas', 401);
     }
 
     const token = jwt.sign(

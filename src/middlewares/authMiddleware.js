@@ -4,6 +4,10 @@ import User from '../models/User.js';
 
 export const protect = async (req, res, next) => {
   try {
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Falta la configuracion de autenticacion' });
+    }
+
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
