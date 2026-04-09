@@ -26,10 +26,19 @@ npm install
 ## Scripts disponibles
 
 ```bash
+npm run test
 npm run dev
 npm run start
 npm run crear-admin -- --name "Administrador" --email admin@demo.com --password "ClaveSegura123"
 ```
+
+## Tests minimos
+
+```bash
+npm test
+```
+
+La bateria actual cubre validaciones basicas de `auth` y manejo consistente de errores HTTP.
 
 ## Bootstrap del primer admin
 
