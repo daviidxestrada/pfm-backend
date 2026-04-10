@@ -18,6 +18,7 @@ const createError = (message, statusCode) => {
   return error;
 };
 
+// Normaliza strings antes de validar o consultar la base de datos.
 const normalizeCredentials = ({ name, email, password } = {}) => ({
   name: typeof name === 'string' ? name.trim() : '',
   email: typeof email === 'string' ? email.trim().toLowerCase() : '',

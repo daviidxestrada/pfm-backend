@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Convierte errores tecnicos frecuentes en respuestas HTTP consistentes.
 const getErrorResponse = (err) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return {
